@@ -9,6 +9,7 @@ class Home extends CI_Controller
 		parent::__construct();
 		if ($_SESSION['role'] == 'admin') {
 			$this->load->model('Pembayaran_model');
+			$this->load->model('Pengeluaran_model');
 		}
 
 		$pesanan = $this->db->get_where('pesanan', ['lunas' => 0])->result_array();
@@ -24,20 +25,24 @@ class Home extends CI_Controller
 		$this->data['transactions'] = null;
 
 		if ($session['username']) {
-			$data = $this->data;
-			$data['title'] = 'Coffee Shop';
+			$this->data['title'] = 'Coffee Shop';
 
-			if ($_SESSION['role'] == 'admin') {
-				if ($this->input->get('dari') && $this->input->get('sampai')) {
-					$dari = $this->input->get('dari') . ' 00:00:00';
-					$sampai = $this->input->get('sampai') . ' 23:59:59';
+			/* Note : Versi sebelumnya */
+			// if ($_SESSION['role'] == 'admin') {
+			// 	if ($this->input->get('dari') && $this->input->get('sampai')) {
+			// 		$dari = $this->input->get('dari') . ' 00:00:00';
+			// 		$sampai = $this->input->get('sampai') . ' 23:59:59';
 
-					$data['transactions'] = $this->Pembayaran_model->getItemSaled($dari, $sampai);
-				}
-			}
+			// 		$data['transactions'] = $this->Pembayaran_model->getItemSaled($dari, $sampai);
+			// 	}
+			// }
 
-			$this->load->view('layouts/_header', $data);
-			$this->load->view('home/index', $data);
+			/* Note : Versi baru */
+			$this->data['total_penjualan'] = $this->Pembayaran_model->getTotalPenjualan();
+			$this->data['total_pembelian'] = $this->Pengeluaran_model->getTotalPembelian();
+
+			$this->load->view('layouts/_header', $this->data);
+			$this->load->view('home/index', $this->data);
 			$this->load->view('layouts/_footer');
 		} else {
 			redirect('auth');

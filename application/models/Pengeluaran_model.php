@@ -33,4 +33,12 @@ class Pengeluaran_model extends CI_Model
         $this->db->where('id', $id);
         $this->db->delete($this->_table);
     }
+
+    public function getTotalPembelian()
+    {
+        $this->db->select('nominal');
+        $this->db->select_sum('nominal');
+
+        return $this->db->get($this->_table)->result_array()[0]['nominal'];
+    }
 }
