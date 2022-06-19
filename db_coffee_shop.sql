@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2022 at 04:58 PM
+-- Generation Time: Jun 19, 2022 at 04:19 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.27
 
@@ -106,7 +106,30 @@ CREATE TABLE `pembayaran` (
 INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id_user`, `tgl_pengajuan`, `jml_cust`, `ket`, `bukti_pembayaran`, `is_lunas`, `date_created`) VALUES
 (4, 1, '65000', 0, 1, '0000-00-00', 0, '', NULL, 1, '2022-05-28 14:01:01'),
 (5, 2, '78000', 1, 1, '2022-05-28', 2, 'asdk', 'words-of-the-week-48_2015.jpg', 1, '2022-05-28 14:01:38'),
-(6, 3, '32000', 1, 1, '2022-05-28', 2, 'sa', 'words-of-the-week-48_20151.jpg', 1, '2022-05-28 14:03:55');
+(6, 3, '32000', 1, 1, '2022-05-28', 2, 'sa', 'words-of-the-week-48_2015.jpg', 0, '2022-05-28 14:03:55'),
+(7, 4, '32000', 0, 1, '0000-00-00', 0, '', NULL, 1, '2022-05-31 06:59:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pengeluaran`
+--
+
+CREATE TABLE `pengeluaran` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(100) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `nominal` int(10) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `pengeluaran`
+--
+
+INSERT INTO `pengeluaran` (`id`, `judul`, `keterangan`, `nominal`, `created_at`) VALUES
+(0, 'testing', 'asdlkasd', 200000, '2022-06-19 13:58:57'),
+(0, 'beli gas', 'asdasd', 20000, '2022-06-19 14:17:38');
 
 -- --------------------------------------------------------
 
@@ -133,7 +156,8 @@ INSERT INTO `pesanan` (`id`, `no_pesanan`, `menu_id`, `quantity`, `subtotal`, `i
 (6, 1, 4, 1, '35000', 1, 1),
 (7, 2, 3, 1, '33000', 1, 1),
 (8, 2, 10, 1, '45000', 1, 1),
-(9, 3, 2, 1, '32000', 1, 1);
+(9, 3, 2, 1, '32000', 1, 1),
+(10, 4, 2, 1, '32000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -215,13 +239,13 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`
