@@ -48,6 +48,9 @@
           <?php endif; ?>
           <a class="nav-item nav-link <?= $this->uri->segment(1) == 'pembayaran' ? 'active' : '' ?>" href="<?= base_url('pembayaran'); ?>">Riwayat Pembayaran</a>
           <a class="nav-item nav-link <?= $this->uri->segment(1) == 'KritikSaran' ? 'active' : '' ?>" href="<?= base_url('KritikSaran'); ?>">Kritik & Saran</a>
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') : ?>
+            <a class="nav-item nav-link <?= $this->uri->segment(1) == 'pengeluaran' ? 'active' : '' ?>" href="<?= base_url('pengeluaran'); ?>">Pengeluaran</a>
+          <?php endif; ?>
           <a class="nav-item nav-link" href="#"><?= $_SESSION['username'] ?></a>
           <a class="nav-item nav-link" href="<?= base_url('auth/logout') ?>">Logout</a>
         </div>

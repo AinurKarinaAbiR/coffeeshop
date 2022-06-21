@@ -1,12 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class KritikSaran extends CI_Controller
+class Pengeluaran extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('KritikSaran_model');
+        $this->load->model('Pengeluaran_model');
         $pesanan = $this->db->get_where('pesanan', ['lunas' => 0, 'id_user', $_SESSION['id']])->result_array();
         $this->data['notif_pesanan'] = 0;
         foreach ($pesanan as $p) {
@@ -16,14 +16,12 @@ class KritikSaran extends CI_Controller
 
     public function index()
     {
-        $this->data['title'] = 'Kritik & Saran';
+        $this->data['title'] = 'Pengeluaran';
 
 
         $this->load->view('layouts/_header', $this->data);
-        if ($_SESSION['role'] == 'customer')
-            $this->load->view('kritik_saran/create');
         if ($_SESSION['role'] == 'admin') {
-            $totalData = $this->db->get('kritik_saran')->num_rows();
+            $totalData = $this->db->get('pengeluaran')->num_rows();
 
             $this->load->library('pagination');
 
@@ -53,31 +51,39 @@ class KritikSaran extends CI_Controller
             $this->pagination->initialize($config);
 
             $start = $this->uri->segment(3);
-            $this->data['data'] = $this->KritikSaran_model->getData($config, $start);
-            $this->load->view('kritik_saran/index', $this->data);
+            $this->data['data'] = $this->Pengeluaran_model->getData($config, $start);
+            $this->load->view('pengeluaran/index', $this->data);
         }
+        $this->load->view('layouts/_footer');
+    }
+
+    public function create()
+    {
+        $this->data['title'] = 'Pengeluaran';
+        $this->load->view('layouts/_header', $this->data);
+        $this->load->view('pengeluaran/create');
         $this->load->view('layouts/_footer');
     }
 
     public function store()
     {
-        if ($this->KritikSaran_model->store($_SESSION['id'])) {
+        if ($this->Pengeluaran_model->store()) {
             $this->session->set_flashdata('pesan', 'Data berhasil disimpan');
-            redirect('KritikSaran/index');
+            redirect('pengeluaran/index');
         } else {
             $this->session->set_flashdata('pesan', 'Terjadi kesalahan');
-            redirect('KritikSaran/index');
+            redirect('pengeluaran/index');
         }
     }
 
     public function delete($id)
     {
-        if ($this->KritikSaran_model->delete($id)) {
+        if ($this->Pengeluaran_model->delete($id)) {
             $this->session->set_flashdata('pesan', 'Data berhasil dihapus');
-            redirect('KritikSaran/index');
+            redirect('pengeluaran/index');
         } else {
             $this->session->set_flashdata('pesan', 'Terjadi kesalahan');
-            redirect('KritikSaran/index');
+            redirect('pengeluaran/index');
         }
     }
 }

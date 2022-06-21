@@ -93,4 +93,13 @@ class Pembayaran_model extends CI_Model
 
         return $this->db->get($this->_table)->result_array();
     }
+
+    public function getTotalPenjualan()
+    {
+        $this->db->select('total_bayar');
+        $this->db->select_sum('total_bayar');
+        $this->db->where('is_lunas =', 1);
+
+        return $this->db->get($this->_table)->result_array()[0]['total_bayar'];
+    }
 }
