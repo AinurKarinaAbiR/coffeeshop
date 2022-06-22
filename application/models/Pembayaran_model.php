@@ -59,7 +59,16 @@ class Pembayaran_model extends CI_Model
             'total_bayar' => $current['subtotal'],
         );
 
-        return $this->db->update($this->_table, $data);
+        $this->db->update($this->_table, $data);
+
+        $lap = array(
+            'nominal' => $current['subtotal'],
+            'jenis' => 'penjualan',
+            'ket' => '-',
+            'created_at' => date('Y-m-d H:i:s')
+        );
+
+        return $this->db->insert('laporan', $lap);
     }
 
     public function getPrintPembayaran($id)

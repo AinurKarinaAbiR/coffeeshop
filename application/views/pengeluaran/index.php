@@ -10,7 +10,7 @@
 						<th>Keterangan</th>
 						<th>Nominal</th>
 						<th>Waktu</th>
-						<th>Aksi</th>
+						<!-- <th>Aksi</th> -->
 					</tr>
 				</thead>
 				<tbody>
@@ -22,11 +22,11 @@
 							<td><?= $item['keterangan'] ?></td>
 							<td>Rp <?= number_format($item['nominal'], 0, ',', '.') ?></td>
 							<td><?= $item['created_at'] ?></td>
-							<td>
+							<!-- <td>
 								<a href=" <?= base_url('Pengeluaran/delete/') . $item['id']; ?>">
 									<button class="btn btn-danger" onclick=" return confirm('Anda yakin akan menghapus menu ini?')">Hapus</button>
 								</a>
-							</td>
+							</td> -->
 						</tr>
 					<?php $no++;
 					endforeach; ?>

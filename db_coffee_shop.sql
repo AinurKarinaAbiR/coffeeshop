@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 4.8.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 19, 2022 at 04:19 PM
--- Server version: 10.4.22-MariaDB
--- PHP Version: 7.4.27
+-- Generation Time: Jun 22, 2022 at 08:19 AM
+-- Server version: 10.1.36-MariaDB
+-- PHP Version: 7.2.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -32,7 +33,7 @@ CREATE TABLE `kritik_saran` (
   `id_user` int(11) NOT NULL,
   `kritik` text NOT NULL,
   `saran` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -51,6 +52,28 @@ INSERT INTO `kritik_saran` (`id`, `id_user`, `kritik`, `saran`, `created_at`) VA
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `laporan`
+--
+
+CREATE TABLE `laporan` (
+  `id` int(11) NOT NULL,
+  `nominal` varchar(10) NOT NULL,
+  `jenis` enum('penjualan','pembelian') NOT NULL,
+  `ket` text,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `laporan`
+--
+
+INSERT INTO `laporan` (`id`, `nominal`, `jenis`, `ket`, `created_at`) VALUES
+(1, '20000', 'pembelian', 'asd', '2022-06-22 00:16:41'),
+(2, '30000', 'penjualan', '-', '2022-06-22 00:26:32');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `menu`
 --
 
@@ -60,7 +83,7 @@ CREATE TABLE `menu` (
   `deskripsi` varchar(1024) NOT NULL,
   `image` varchar(128) NOT NULL,
   `harga` varchar(128) NOT NULL,
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -89,14 +112,14 @@ CREATE TABLE `pembayaran` (
   `id` int(11) NOT NULL,
   `no_pesanan` int(11) NOT NULL,
   `total_bayar` varchar(128) NOT NULL DEFAULT '0',
-  `is_reservasi` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
+  `is_reservasi` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `id_user` int(11) DEFAULT NULL,
   `tgl_pengajuan` date DEFAULT NULL,
   `jml_cust` int(11) DEFAULT NULL,
-  `ket` text DEFAULT NULL,
+  `ket` text,
   `bukti_pembayaran` varchar(255) DEFAULT NULL,
-  `is_lunas` tinyint(4) NOT NULL DEFAULT 0,
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
+  `is_lunas` tinyint(4) NOT NULL DEFAULT '0',
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -104,10 +127,7 @@ CREATE TABLE `pembayaran` (
 --
 
 INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id_user`, `tgl_pengajuan`, `jml_cust`, `ket`, `bukti_pembayaran`, `is_lunas`, `date_created`) VALUES
-(4, 1, '65000', 0, 1, '0000-00-00', 0, '', NULL, 1, '2022-05-28 14:01:01'),
-(5, 2, '78000', 1, 1, '2022-05-28', 2, 'asdk', 'words-of-the-week-48_2015.jpg', 1, '2022-05-28 14:01:38'),
-(6, 3, '32000', 1, 1, '2022-05-28', 2, 'sa', 'words-of-the-week-48_2015.jpg', 0, '2022-05-28 14:03:55'),
-(7, 4, '32000', 0, 1, '0000-00-00', 0, '', NULL, 1, '2022-05-31 06:59:21');
+(1, 1, '30000', 0, 6, '0000-00-00', 0, '', NULL, 1, '2022-06-22 05:26:32');
 
 -- --------------------------------------------------------
 
@@ -118,9 +138,9 @@ INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id
 CREATE TABLE `pengeluaran` (
   `id` int(11) NOT NULL,
   `judul` varchar(100) NOT NULL,
-  `keterangan` text DEFAULT NULL,
+  `keterangan` text,
   `nominal` int(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -128,8 +148,7 @@ CREATE TABLE `pengeluaran` (
 --
 
 INSERT INTO `pengeluaran` (`id`, `judul`, `keterangan`, `nominal`, `created_at`) VALUES
-(0, 'testing', 'asdlkasd', 200000, '2022-06-19 13:58:57'),
-(0, 'beli gas', 'asdasd', 20000, '2022-06-19 14:17:38');
+(1, 'beli gas', 'asd', 20000, '2022-06-22 05:16:41');
 
 -- --------------------------------------------------------
 
@@ -152,12 +171,7 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id`, `no_pesanan`, `menu_id`, `quantity`, `subtotal`, `id_user`, `lunas`) VALUES
-(5, 1, 1, 1, '30000', 1, 1),
-(6, 1, 4, 1, '35000', 1, 1),
-(7, 2, 3, 1, '33000', 1, 1),
-(8, 2, 10, 1, '45000', 1, 1),
-(9, 3, 2, 1, '32000', 1, 1),
-(10, 4, 2, 1, '32000', 1, 1);
+(1, 1, 1, 1, '30000', 6, 1);
 
 -- --------------------------------------------------------
 
@@ -181,7 +195,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `nama`, `no_telp`, `username`, `password`, `role`) VALUES
 (1, 'oong26', '', 'oong26', '$2y$10$byrgQu3iTBPvt33wkm7BFOyziwpYmoSC0m5iuE37/bwzxXeXojRhC', 'customer'),
 (4, 'khalil', '', 'khalil', '$2y$10$RHwW3sanAixYhPRTq9DYkOH042nG6Eh.mIUymeuVFTKX55mmeJIdS', 'customer'),
-(5, 'kasir', '08514452568', 'kasir', '$2y$10$byrgQu3iTBPvt33wkm7BFOyziwpYmoSC0m5iuE37/bwzxXeXojRhC', 'admin');
+(5, 'kasir', '08514452568', 'kasir', '$2y$10$byrgQu3iTBPvt33wkm7BFOyziwpYmoSC0m5iuE37/bwzxXeXojRhC', 'admin'),
+(6, 'karin', '', 'karin', '$2y$10$4dap3uDu.0do1C5XHmnKD.aAT23rlKfP0Ui8O.qc6bzJlAAH9IZBm', 'customer'),
+(7, 'karina', '', 'karina', '$2y$10$9xTWphkec78JJmWhLU1Pcer/4SFJNmkFIgNHffogc0D.h/dOxzOFC', 'customer');
 
 --
 -- Indexes for dumped tables
@@ -191,6 +207,12 @@ INSERT INTO `users` (`id`, `nama`, `no_telp`, `username`, `password`, `role`) VA
 -- Indexes for table `kritik_saran`
 --
 ALTER TABLE `kritik_saran`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `laporan`
+--
+ALTER TABLE `laporan`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -205,6 +227,12 @@ ALTER TABLE `menu`
 ALTER TABLE `pembayaran`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_user` (`id_user`);
+
+--
+-- Indexes for table `pengeluaran`
+--
+ALTER TABLE `pengeluaran`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `pesanan`
@@ -230,28 +258,40 @@ ALTER TABLE `kritik_saran`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `laporan`
+--
+ALTER TABLE `laporan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `pengeluaran`
+--
+ALTER TABLE `pengeluaran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

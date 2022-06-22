@@ -25,7 +25,16 @@ class Pengeluaran_model extends CI_Model
             'nominal' => $this->input->post('nominal'),
         );
 
-        return $this->db->insert($this->_table, $data);
+        $this->db->insert($this->_table, $data);
+
+        $lap = array(
+            'nominal' => $this->input->post('nominal'),
+            'jenis' => 'pembelian',
+            'ket' => $this->input->post('keterangan'),
+            'created_at' => date('Y-m-d H:i:s')
+        );
+
+        return $this->db->insert('laporan', $lap);
     }
 
     public function delete($id)

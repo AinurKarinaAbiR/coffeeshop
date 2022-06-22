@@ -47,8 +47,8 @@
 										<td>Rp. <?= number_format($item['total_bayar'], 0, ',', '.') ?></td>
 										<td><?= $item['is_reservasi'] == 1 ? 'Reservasi' : 'Dine In' ?></td>
 										<td><?= isset($item['tgl_pengajuan']) ? $item['tgl_pengajuan'] : '-' ?></td>
-										<td><?= isset($item['jml_cust']) ? $item['jml_cust'] : '-' ?></td>
-										<td><?= isset($item['ket']) || $item['ket'] != '' ? $item['ket'] : '-' ?></td>
+										<td><?= $item['jml_cust'] > 0 ? $item['jml_cust'] : '-' ?></td>
+										<td><?= $item['ket'] != '' ? $item['ket'] : '-' ?></td>
 										<td><?= $item['date_created'] ?></td>
 										<td>
 											<?php if ($item['is_lunas']) { ?>

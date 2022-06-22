@@ -98,23 +98,35 @@ class Pesanan extends CI_Controller
 
 		$data = [
 			'no_pesanan'		=> $no_pesanan,
-			// 'total_bayar'		=> $this->input->post('tanggal_pengajuan') ? 0 : $total,
-			'total_bayar'		=> 0,
+			'total_bayar'		=> $this->input->post('tanggal_pengajuan') ? 0 : $total,
+			// 'total_bayar'		=> 0,
 			'is_reservasi' => $this->input->post('tanggal_pengajuan') ? 1 : 0,
 			'id_user' => $_SESSION['id'],
 			'tgl_pengajuan' => $this->input->post('tanggal_pengajuan'),
 			'jml_cust' => $this->input->post('jml_cust'),
 			'ket' => $this->input->post('keterangan'),
-			// 'is_lunas' => $this->input->post('tanggal_pengajuan') ? 0 : 1,
-			'is_lunas' => 0,
+			'is_lunas' => $this->input->post('tanggal_pengajuan') ? 0 : 1,
+			// 'is_lunas' => 0,
 		];
 
 		$this->db->insert('pembayaran', $data);
-
+		
 		$this->db->set('lunas', 1);
 		$this->db->where('no_pesanan', $no_pesanan);
 		$this->db->update('pesanan');
 
+		if ($this->input->post('jml_cust') == null) {
+			// Dine in
+			$lap = array(
+				'nominal' => $total,
+				'jenis' => 'penjualan',
+				'ket' => '-',
+				'created_at' => date('Y-m-d H:i:s')
+			);
+	
+			$this->db->insert('laporan', $lap);
+		}
+		
 		redirect('pembayaran');
 	}
 }
