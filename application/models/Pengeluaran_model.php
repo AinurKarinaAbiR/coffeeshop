@@ -29,7 +29,7 @@ class Pengeluaran_model extends CI_Model
 
         $lap = array(
             'nominal' => $this->input->post('nominal'),
-            'jenis' => 'pembelian',
+            'jenis' => 'pengeluaran',
             'ket' => $this->input->post('keterangan'),
             'created_at' => date('Y-m-d H:i:s')
         );

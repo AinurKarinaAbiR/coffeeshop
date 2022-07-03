@@ -11,9 +11,9 @@ class Home extends CI_Controller
 	{
 		parent::__construct();
 		// if ($_SESSION['role'] == 'admin') {
-			// $this->load->model('Pembayaran_model');
-			// $this->load->model('Pengeluaran_model');
-			$this->load->model('Laporan_model');
+		// $this->load->model('Pembayaran_model');
+		// $this->load->model('Pengeluaran_model');
+		$this->load->model('Laporan_model');
 		// }
 
 		$pesanan = $this->db->get_where('pesanan', ['lunas' => 0])->result_array();
@@ -42,8 +42,8 @@ class Home extends CI_Controller
 			// }
 
 			/* Note : Versi baru */
-			$this->data['total_penjualan'] = $this->Laporan_model->getTotalPenjualan();
-			$this->data['total_pembelian'] = $this->Laporan_model->getTotalPembelian();
+			$this->data['total_pemasukan'] = $this->Laporan_model->getTotalPemasukan();
+			$this->data['total_pengeluaran'] = $this->Laporan_model->getTotalPengeluaran();
 
 			$this->load->view('layouts/_header', $this->data);
 			$this->load->view('home/index', $this->data);
@@ -55,25 +55,30 @@ class Home extends CI_Controller
 
 	public function cetak()
 	{
+		$jenis = $this->input->get('jenis');
+		$dari = $this->input->get('dari');
+		$sampai = $this->input->get('sampai');
+
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 
-		$laporan = $this->Laporan_model->laporan();
+		$laporan = $this->Laporan_model->laporan($jenis, $dari, $sampai);
+
 
 		// Buat sebuah variabel untuk menampung pengaturan style dari header tabel
 		$style_col = [
 			'font' => ['bold' => true], // Set font nya jadi bold
 			'alignment' => [
-			  'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Set text jadi ditengah secara horizontal (center)
-			  'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+				'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Set text jadi ditengah secara horizontal (center)
+				'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
 			],
 			'borders' => [
-			  'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border top dengan garis tipis
-			  'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  // Set border right dengan garis tipis
-			  'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border bottom dengan garis tipis
-			  'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] // Set border left dengan garis tipis
+				'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border top dengan garis tipis
+				'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  // Set border right dengan garis tipis
+				'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border bottom dengan garis tipis
+				'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] // Set border left dengan garis tipis
 			]
-		  ];
+		];
 
 		// Buat sebuah variabel untuk menampung pengaturan style dari isi tabel
 		$style_row = [
@@ -88,9 +93,10 @@ class Home extends CI_Controller
 			]
 		];
 
-		$sheet->setCellValue('A1', "LAPORAN LABA RUGI"); // Set kolom A1 dengan tulisan "DATA SISWA"
+		$sheet->setCellValue('A1', "LAPORAN LABA RUGI PADA TANGGAL " . $dari . " sampai " . $sampai); // Set kolom A1 dengan tulisan "DATA SISWA"
 		$sheet->mergeCells('A1:E1'); // Set Merge Cell pada kolom A1 sampai E1
 		$sheet->getStyle('A1')->getFont()->setBold(true); // Set bold kolom A1
+		$sheet->getStyle('A1')->applyFromArray($style_col);
 		// Buat header tabel nya pada baris ke 3
 		$sheet->setCellValue('A3', "NO"); // Set kolom A3 dengan tulisan "NO"
 		$sheet->setCellValue('B3', "JENIS"); // Set kolom B3 dengan tulisan "NIS"
@@ -106,20 +112,20 @@ class Home extends CI_Controller
 
 		$no = 1; // Untuk penomoran tabel, di awal set dengan 1
 		$numrow = 4; // Set baris pertama untuk isi tabel adalah baris ke 4
-		foreach($laporan as $data){ // Lakukan looping pada variabel siswa
-			$sheet->setCellValue('A'.$numrow, $no);
-			$sheet->setCellValue('B'.$numrow, $data->jenis);
-			$sheet->setCellValue('C'.$numrow, $data->ket);
-			$sheet->setCellValue('D'.$numrow, $data->nominal);
-			$sheet->setCellValue('E'.$numrow, date('d-M-Y', strtotime($data->created_at)));
-			
+		foreach ($laporan as $data) { // Lakukan looping pada variabel siswa
+			$sheet->setCellValue('A' . $numrow, $no);
+			$sheet->setCellValue('B' . $numrow, $data->jenis);
+			$sheet->setCellValue('C' . $numrow, $data->ket);
+			$sheet->setCellValue('D' . $numrow, $data->nominal);
+			$sheet->setCellValue('E' . $numrow, date('d-M-Y', strtotime($data->created_at)));
+
 			// Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
-			$sheet->getStyle('A'.$numrow)->applyFromArray($style_row);
-			$sheet->getStyle('B'.$numrow)->applyFromArray($style_row);
-			$sheet->getStyle('C'.$numrow)->applyFromArray($style_row);
-			$sheet->getStyle('D'.$numrow)->applyFromArray($style_row);
-			$sheet->getStyle('E'.$numrow)->applyFromArray($style_row);
-			
+			$sheet->getStyle('A' . $numrow)->applyFromArray($style_row);
+			$sheet->getStyle('B' . $numrow)->applyFromArray($style_row);
+			$sheet->getStyle('C' . $numrow)->applyFromArray($style_row);
+			$sheet->getStyle('D' . $numrow)->applyFromArray($style_row);
+			$sheet->getStyle('E' . $numrow)->applyFromArray($style_row);
+
 			$no++; // Tambah 1 setiap kali looping
 			$numrow++; // Tambah 1 setiap kali looping
 		}
@@ -130,7 +136,7 @@ class Home extends CI_Controller
 		$sheet->getColumnDimension('C')->setWidth(25); // Set width kolom C
 		$sheet->getColumnDimension('D')->setWidth(20); // Set width kolom D
 		$sheet->getColumnDimension('E')->setWidth(20); // Set width kolom D
-		
+
 		// Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
 		$sheet->getDefaultRowDimension()->setRowHeight(-1);
 		// Set orientasi kertas jadi LANDSCAPE
