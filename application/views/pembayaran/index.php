@@ -65,7 +65,7 @@
 												<img src="<?= base_url('/assets/bukti_pembayaran') . '/' . $item['bukti_pembayaran'] ?>" width="100" height="100">
 												<a href="<?= base_url('/assets/bukti_pembayaran') . '/' . $item['bukti_pembayaran'] ?>" target="_blank">Lihat</a>
 											<?php }
-											if ($item['is_reservasi']) { ?>
+											if ($item['is_reservasi'] && $_SESSION['role'] == 'customer') { ?>
 												<a href="<?= base_url('pembayaran/uploadbukti') . '/' . $item['id'] ?>">upload</a>
 											<?php } ?>
 										</td>
