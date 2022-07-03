@@ -27,7 +27,8 @@
 									<th>Jumlah Customer</th>
 									<th>Ket</th>
 									<th>Dibuat pada</th>
-									<th>Status</th>
+									<th>Status Pembayaran</th>
+									<th>Status Reservasi</th>
 									<th>Bukti pembayaran</th>
 									<?php if ($_SESSION['role'] == 'admin') { ?>
 										<th>Aksi</th>
@@ -60,24 +61,40 @@
 											<?php } ?>
 
 										</td>
+										<td>
+											<?php if ($item['is_reservasi']) : ?>
+												<!-- <?= $item['status_reservasi'] == null ? 'pending' : $item['status_reservasi'] ?> -->
+												<?php if ($item['status_reservasi'] == 'ditolak') { ?>
+													ditolak
+													<a href="#alasanModal" class="lihatAlasan" data-alasan="<?= $item['alasan_penolakan'] ?>">Lihat Alasan</a>
+												<?php } elseif ($item['status_reservasi'] == 'diterima') {
+													echo ('diterima') ?>
+												<?php } else echo ('-') ?>
+											<?php endif ?>
+											<?php if (!$item['is_reservasi']) : ?>
+												-
+											<?php endif ?>
+										</td>
 										<td class="text-center">
 											<?php if ($item['is_reservasi'] && isset($item['bukti_pembayaran'])) { ?>
 												<img src="<?= base_url('/assets/bukti_pembayaran') . '/' . $item['bukti_pembayaran'] ?>" width="100" height="100">
 												<a href="<?= base_url('/assets/bukti_pembayaran') . '/' . $item['bukti_pembayaran'] ?>" target="_blank">Lihat</a>
-											<?php }
-											if ($item['is_reservasi'] && $_SESSION['role'] == 'customer') { ?>
-												<a href="<?= base_url('pembayaran/uploadbukti') . '/' . $item['id'] ?>">upload</a>
-											<?php } ?>
+											<?php } elseif ($item['is_reservasi'] && $_SESSION['role'] == 'customer' && $item['status_reservasi'] == 'diterima') { ?>
+												<a href="<?= base_url('pembayaran/uploadbukti/' . $item['id'] . '/' . $item['subtotal']) ?>">upload</a>
+											<?php } else echo ('-'); ?>
 										</td>
-										<?php if ($_SESSION['role'] == 'admin' && ($item['is_reservasi'] && isset($item['bukti_pembayaran']) || !$item['is_reservasi'] && !$item['is_lunas'])) { ?>
+										<?php if ($_SESSION['role'] == 'admin') : ?>
 											<td>
-												<?php if ($item['is_lunas'] == 0) { ?>
-													<a href="<?= base_url('pembayaran/confirm') . '/' . $item['id'] ?>" onclick="return confirm('Anda yakin?')">Konfirmasi</a>
-												<?php } else { ?>
-													-
-												<?php } ?>
+												<?php if (($item['is_reservasi'] && isset($item['bukti_pembayaran']) || !$item['is_reservasi'] && !$item['is_lunas'])) { ?>
+													<?php if ($item['is_lunas'] == 0) { ?>
+														<a href="<?= base_url('pembayaran/confirm') . '/' . $item['id'] ?>" onclick="return confirm('Anda yakin?')">Konfirmasi Selesai</a>
+													<?php } else echo ('--'); ?>
+												<?php } elseif ($item['is_reservasi'] && $item['status_reservasi'] == null) { ?>
+													<a class="btn btn-sm btn-success m-1" href="<?= base_url('pembayaran/terimareservasi') . '/' . $item['id'] ?>" onclick="return confirm('Anda yakin?')">Terima</a>
+													<a class="btn btn-sm btn-danger m-1" href="<?= base_url('pembayaran/tolakreservasi') . '/' . $item['id'] ?>" onclick="return confirm('Anda yakin?')">Tolak</a>
+												<?php } else echo ('-'); ?>
 											</td>
-										<?php } ?>
+										<?php endif ?>
 									</tr>
 								<?php $no++;
 								endforeach; ?>
@@ -89,4 +106,21 @@
 		</div>
 	</div>
 </div>
+<!-- Modal -->
+<div class="modal hide" id="alasanModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="alasanModalLabel">Alasan Penolakan</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="alasan_penolakan"></p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Modal -->
 <!-- End Pesanan -->

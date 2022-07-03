@@ -28,12 +28,12 @@ class Pembayaran extends CI_Controller
         $this->load->view('layouts/_footer');
     }
 
-    public function uploadbukti($id)
+    public function uploadbukti($id, $total)
     {
         $data = $this->data;
         $data['id'] = $id;
         $data['title'] = 'Upload Bukti Pembayaran';
-
+        $data['total'] = $total;
 
         $this->load->view('layouts/_header', $data);
         $this->load->view('pembayaran/upload', $data);
@@ -55,13 +55,24 @@ class Pembayaran extends CI_Controller
 
     public function uploadProcess()
     {
-        $fileBukti = $this->upload_foto();
+        $nominal_dp = $this->input->post('dp');
+        // echo ('nominal dp :' . $nominal_dp);
+        // echo ('<br>');
+        // echo ('minimal dp :' . $this->input->post('min_dp'));
+        if ($nominal_dp != null) {
+            if ($nominal_dp < $this->input->post('min_dp')) {
+                $this->session->set_flashdata('pesan', 'nominal dp kurang');
+            } else {
+                $fileBukti = $this->upload_foto();
 
-        if ($this->Pembayaran_model->uploadBukti($fileBukti['file_name'])) {
-            $this->session->set_flashdata('pesan', 'data berhasil disimpan');
-        } else {
-            $this->session->set_flashdata('pesan', 'terjadi kesalahan');
-        }
+                if ($this->Pembayaran_model->uploadBukti($fileBukti['file_name'])) {
+                    $this->session->set_flashdata('pesan', 'data berhasil disimpan');
+                } else {
+                    $this->session->set_flashdata('pesan', 'terjadi kesalahan');
+                }
+            }
+        } else
+            $this->session->set_flashdata('pesan', 'nominal dp harus diisi');
 
         redirect('pembayaran');
     }
@@ -77,6 +88,39 @@ class Pembayaran extends CI_Controller
 
         redirect('pembayaran');
     }
+
+    /* Reservasi */
+    public function terimareservasi($id)
+    {
+        if ($this->Pembayaran_model->terimaReservasi($id)) {
+            $this->session->set_flashdata('pesan', 'berhasil menolak');
+        } else {
+            $this->session->set_flashdata('pesan', 'terjadi kesalahan');
+        }
+        redirect('pembayaran');
+    }
+
+    public function tolakreservasi($id)
+    {
+        $this->data['title'] = 'Alasan Penolakan';
+        $this->data['id'] = $id;
+
+        $this->load->view('layouts/_header', $this->data);
+        $this->load->view('pembayaran/form-tolak');
+        $this->load->view('layouts/_footer');
+    }
+
+    public function prosesTolak($id)
+    {
+        if ($this->Pembayaran_model->tolakReservasi($id)) {
+            $this->session->set_flashdata('pesan', 'berhasil menolak');
+
+            redirect('pembayaran');
+        } else {
+            $this->session->set_flashdata('pesan', 'terjadi kesalahan');
+        }
+    }
+    /* End Reservasi */
 
     public function print($id)
     {

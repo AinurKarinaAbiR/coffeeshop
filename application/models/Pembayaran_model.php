@@ -37,7 +37,7 @@ class Pembayaran_model extends CI_Model
         $data = array(
             'bukti_pembayaran' => $filename,
             'is_lunas' => $current['is_reservasi'] ? 0 : 1,
-            'total_bayar' => $current['is_reservasi'] ? (int) $current['subtotal'] / 2 : $current['subtotal'],
+            'total_bayar' => $current['is_reservasi'] ? (int) $this->input->post('dp') : $current['subtotal'],
         );
 
         return $this->db->update($this->_table, $data);
@@ -63,7 +63,7 @@ class Pembayaran_model extends CI_Model
 
         $lap = array(
             'nominal' => $current['subtotal'],
-            'jenis' => 'penjualan',
+            'jenis' => 'pemasukan',
             'ket' => '-',
             'created_at' => date('Y-m-d H:i:s')
         );
@@ -111,4 +111,29 @@ class Pembayaran_model extends CI_Model
 
         return $this->db->get($this->_table)->result_array()[0]['total_bayar'];
     }
+
+    /* Reservasi */
+    public function terimaReservasi($id)
+    {
+        $this->db->where('id', $id);
+
+        $data = array(
+            'status_reservasi' => 'diterima',
+        );
+
+        return $this->db->update($this->_table, $data);
+    }
+
+    public function tolakReservasi($id)
+    {
+        $this->db->where('id', $id);
+
+        $data = array(
+            'status_reservasi' => 'ditolak',
+            'alasan_penolakan' => $this->input->post('alasan'),
+        );
+
+        return $this->db->update($this->_table, $data);
+    }
+    /* End Reservasi */
 }

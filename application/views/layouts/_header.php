@@ -57,4 +57,16 @@
       </div>
     </div>
   </nav>
+  <?php if ($this->session->flashdata('pesan')) : ?>
+    <div class="row" style="width: 60% !important; margin: 12px auto !important;">
+      <div class="col-12">
+        <div class="alert alert-dark alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <?= $this->session->flashdata('pesan') ?>
+        </div>
+      </div>
+    </div>
+  <?php endif ?>
   <!-- End Navbar -->

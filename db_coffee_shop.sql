@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 22, 2022 at 08:19 AM
--- Server version: 10.1.36-MariaDB
--- PHP Version: 7.2.11
+-- Generation Time: Jul 03, 2022 at 06:57 PM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 7.4.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -33,7 +32,7 @@ CREATE TABLE `kritik_saran` (
   `id_user` int(11) NOT NULL,
   `kritik` text NOT NULL,
   `saran` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -58,9 +57,9 @@ INSERT INTO `kritik_saran` (`id`, `id_user`, `kritik`, `saran`, `created_at`) VA
 CREATE TABLE `laporan` (
   `id` int(11) NOT NULL,
   `nominal` varchar(10) NOT NULL,
-  `jenis` enum('penjualan','pembelian') NOT NULL,
-  `ket` text,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `jenis` enum('pemasukan','pengeluaran') NOT NULL,
+  `ket` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -68,8 +67,10 @@ CREATE TABLE `laporan` (
 --
 
 INSERT INTO `laporan` (`id`, `nominal`, `jenis`, `ket`, `created_at`) VALUES
-(1, '20000', 'pembelian', 'asd', '2022-06-22 00:16:41'),
-(2, '30000', 'penjualan', '-', '2022-06-22 00:26:32');
+(1, '20000', 'pengeluaran', 'asd', '2022-06-22 00:16:41'),
+(3, '50000', 'pengeluaran', 'beli bubuk arabika', '2022-07-03 10:35:13'),
+(4, '33000', 'pemasukan', '-', '2022-07-03 10:50:13'),
+(5, '30000', 'pemasukan', '-', '2022-07-03 11:54:52');
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,7 @@ CREATE TABLE `menu` (
   `deskripsi` varchar(1024) NOT NULL,
   `image` varchar(128) NOT NULL,
   `harga` varchar(128) NOT NULL,
-  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -112,22 +113,26 @@ CREATE TABLE `pembayaran` (
   `id` int(11) NOT NULL,
   `no_pesanan` int(11) NOT NULL,
   `total_bayar` varchar(128) NOT NULL DEFAULT '0',
-  `is_reservasi` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
+  `is_reservasi` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
   `id_user` int(11) DEFAULT NULL,
   `tgl_pengajuan` date DEFAULT NULL,
   `jml_cust` int(11) DEFAULT NULL,
-  `ket` text,
+  `ket` text DEFAULT NULL,
   `bukti_pembayaran` varchar(255) DEFAULT NULL,
-  `is_lunas` tinyint(4) NOT NULL DEFAULT '0',
-  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `is_lunas` tinyint(4) NOT NULL DEFAULT 0,
+  `status_reservasi` enum('diterima','ditolak') DEFAULT NULL,
+  `alasan_penolakan` text DEFAULT NULL,
+  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pembayaran`
 --
 
-INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id_user`, `tgl_pengajuan`, `jml_cust`, `ket`, `bukti_pembayaran`, `is_lunas`, `date_created`) VALUES
-(1, 1, '30000', 0, 6, '0000-00-00', 0, '', NULL, 1, '2022-06-22 05:26:32');
+INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id_user`, `tgl_pengajuan`, `jml_cust`, `ket`, `bukti_pembayaran`, `is_lunas`, `status_reservasi`, `alasan_penolakan`, `date_created`) VALUES
+(2, 2, '0', 1, 1, '2022-07-06', 1, 'q', NULL, 0, 'ditolak', 'Tempat digunakan', '2022-07-03 15:05:28'),
+(3, 3, '33000', 0, 1, '0000-00-00', 0, '', NULL, 1, NULL, NULL, '2022-07-03 15:50:13'),
+(4, 4, '30000', 1, 1, '2022-07-08', 1, 'reservasi kedua', 'Instagram_post_-_17.png', 1, 'diterima', NULL, '2022-07-03 16:15:40');
 
 -- --------------------------------------------------------
 
@@ -138,17 +143,19 @@ INSERT INTO `pembayaran` (`id`, `no_pesanan`, `total_bayar`, `is_reservasi`, `id
 CREATE TABLE `pengeluaran` (
   `id` int(11) NOT NULL,
   `judul` varchar(100) NOT NULL,
-  `keterangan` text,
+  `keterangan` text DEFAULT NULL,
   `nominal` int(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `bukti` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `pengeluaran`
 --
 
-INSERT INTO `pengeluaran` (`id`, `judul`, `keterangan`, `nominal`, `created_at`) VALUES
-(1, 'beli gas', 'asd', 20000, '2022-06-22 05:16:41');
+INSERT INTO `pengeluaran` (`id`, `judul`, `keterangan`, `nominal`, `bukti`, `created_at`) VALUES
+(1, 'beli gas', 'asd', 20000, 'robusta.jpg', '2022-06-22 05:16:41'),
+(2, 'Beli bubuk kopi', 'beli bubuk arabika', 50000, 'arabika.jpg', '2022-07-03 15:35:13');
 
 -- --------------------------------------------------------
 
@@ -171,7 +178,10 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id`, `no_pesanan`, `menu_id`, `quantity`, `subtotal`, `id_user`, `lunas`) VALUES
-(1, 1, 1, 1, '30000', 6, 1);
+(1, 1, 1, 1, '30000', 6, 1),
+(2, 2, 1, 1, '30000', 1, 1),
+(3, 3, 3, 1, '33000', 1, 1),
+(4, 4, 1, 1, '30000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -261,7 +271,7 @@ ALTER TABLE `kritik_saran`
 -- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `menu`
@@ -273,19 +283,19 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pengeluaran`
 --
 ALTER TABLE `pengeluaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`

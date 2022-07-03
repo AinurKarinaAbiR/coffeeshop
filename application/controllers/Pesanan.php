@@ -110,7 +110,7 @@ class Pesanan extends CI_Controller
 		];
 
 		$this->db->insert('pembayaran', $data);
-		
+
 		$this->db->set('lunas', 1);
 		$this->db->where('no_pesanan', $no_pesanan);
 		$this->db->update('pesanan');
@@ -119,14 +119,14 @@ class Pesanan extends CI_Controller
 			// Dine in
 			$lap = array(
 				'nominal' => $total,
-				'jenis' => 'penjualan',
+				'jenis' => 'pemasukan',
 				'ket' => '-',
 				'created_at' => date('Y-m-d H:i:s')
 			);
-	
+
 			$this->db->insert('laporan', $lap);
 		}
-		
+
 		redirect('pembayaran');
 	}
 }
