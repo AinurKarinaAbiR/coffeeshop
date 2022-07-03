@@ -17,12 +17,13 @@ class Pengeluaran_model extends CI_Model
         return $query->result_array();
     }
 
-    public function store()
+    public function store($filename)
     {
         $data = array(
             'judul' => $this->input->post('judul'),
             'keterangan' => $this->input->post('keterangan'),
             'nominal' => $this->input->post('nominal'),
+            'bukti' => $filename,
         );
 
         $this->db->insert($this->_table, $data);

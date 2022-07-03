@@ -65,9 +65,24 @@ class Pengeluaran extends CI_Controller
         $this->load->view('layouts/_footer');
     }
 
+    function upload_foto()
+    {
+        $config['upload_path']          = './assets/bukti_pengeluaran/';
+        $config['allowed_types']        = 'jpg|png';
+        //$config['max_size']             = 100;
+        //$config['max_width']            = 1024;
+        //$config['max_height']           = 768;
+        $config['file_name'] = $_FILES['bukti']['name'];
+        $this->load->library('upload', $config);
+        $this->upload->do_upload('bukti');
+        return $this->upload->data();
+    }
+
     public function store()
     {
-        if ($this->Pengeluaran_model->store()) {
+        $fileBukti = $this->upload_foto();
+
+        if ($this->Pengeluaran_model->store($fileBukti['file_name'])) {
             $this->session->set_flashdata('pesan', 'Data berhasil disimpan');
             redirect('pengeluaran/index');
         } else {

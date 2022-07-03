@@ -9,6 +9,7 @@
 						<th>Judul</th>
 						<th>Keterangan</th>
 						<th>Nominal</th>
+						<th>Bukti</th>
 						<th>Waktu</th>
 						<!-- <th>Aksi</th> -->
 					</tr>
@@ -21,6 +22,10 @@
 							<td><?= $item['judul'] ?></td>
 							<td><?= $item['keterangan'] ?></td>
 							<td>Rp <?= number_format($item['nominal'], 0, ',', '.') ?></td>
+							<td>
+								<img src="<?= base_url('/assets/bukti_pengeluaran') . '/' . $item['bukti'] ?>" width="100" height="100"><br>
+								<a href="<?= base_url('/assets/bukti_pengeluaran') . '/' . $item['bukti'] ?>" target="_blank">Lihat</a>
+							</td>
 							<td><?= $item['created_at'] ?></td>
 							<!-- <td>
 								<a href=" <?= base_url('Pengeluaran/delete/') . $item['id']; ?>">
